@@ -1,0 +1,10 @@
+ext {
+    snoopyGrpcBaseVersion = "1.0.0-RC1"
+    eurekaVersion = "1.10.15"
+    library = [
+            //snoopy-grpc-base
+            snoopy_grpc_base: "com.snoopy:snoopy-grpc-base:${snoopyGrpcBaseVersion}",
+            //eureka-client
+            eureka_client   : "com.netflix.eureka:eureka-client:${eurekaVersion}"
+    ]
+}
