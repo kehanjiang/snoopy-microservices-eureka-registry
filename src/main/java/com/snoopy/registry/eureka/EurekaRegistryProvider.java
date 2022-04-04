@@ -10,14 +10,9 @@ import com.snoopy.grpc.base.registry.IRegistryProvider;
  */
 public class EurekaRegistryProvider implements IRegistryProvider {
     public static final String REGISTRY_PROTOCOL_EUREKA = "eureka";
-    private GrpcRegistryProperties grpcRegistryProperties;
-
-    public EurekaRegistryProvider(GrpcRegistryProperties grpcRegistryProperties) {
-        this.grpcRegistryProperties = grpcRegistryProperties;
-    }
 
     @Override
-    public IRegistry newRegistryInstance() {
+    public IRegistry newRegistryInstance(GrpcRegistryProperties grpcRegistryProperties) {
         return new EurekaRegistry(grpcRegistryProperties);
     }
 
