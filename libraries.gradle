@@ -1,5 +1,5 @@
 ext {
-    snoopyGrpcBaseVersion = "1.0.0-RC1"
+    snoopyGrpcBaseVersion = "1.0.0-SNAPSHOT"
     eurekaVersion = "1.10.15"
     library = [
             //snoopy-grpc-base
