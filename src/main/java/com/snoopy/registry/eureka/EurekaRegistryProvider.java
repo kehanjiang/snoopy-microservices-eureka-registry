@@ -1,12 +1,15 @@
 package com.snoopy.registry.eureka;
 
+import com.google.common.hash.Hashing;
 import com.netflix.config.ConfigurationManager;
 import com.snoopy.grpc.base.configure.GrpcRegistryProperties;
 import com.snoopy.grpc.base.constans.GrpcConstants;
 import com.snoopy.grpc.base.registry.IRegistry;
 import com.snoopy.grpc.base.registry.IRegistryProvider;
+import com.snoopy.grpc.base.utils.NetUtil;
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -76,7 +79,10 @@ public class EurekaRegistryProvider implements IRegistryProvider {
         Properties properties = new Properties();
         properties.setProperty(encodeEurekaParamName("name"), grpcRegistryProperties.getProperty("application.name", DEFAULT_NAME));
         properties.setProperty(encodeEurekaParamName("appGroup"), APP_GROUP);
-        properties.setProperty(encodeEurekaParamName("instanceId"), UUID.randomUUID().toString());
+        String instanceId= Hashing.murmur3_128()
+                .hashString(System.getProperty("user.dir")+ NetUtil.getLocalIpAddress(), StandardCharsets.UTF_8)
+                .toString();
+        properties.setProperty(encodeEurekaParamName("instanceId"),instanceId);
         properties.setProperty(encodeEurekaParamName("region"), DEFAULT_REGION);
         properties.setProperty("eureka.environment", DEFAULT_ENV);
         properties.setProperty(encodeEurekaParamName("homePageUrl"), "");
