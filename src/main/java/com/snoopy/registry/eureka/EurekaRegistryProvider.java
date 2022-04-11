@@ -31,44 +31,42 @@ public class EurekaRegistryProvider implements IRegistryProvider {
     private static final Map<String, String> params = new HashMap<>();
 
     static {
-        addParam("name");
-        addParam("appGroup");
-        addParam("asgName");
 
-        addParam("region");
+        params.put("name", encodeEurekaParamName("name"));
+        params.put("appGroup", encodeEurekaParamName("appGroup"));
+        params.put("asgName", encodeEurekaParamName("asgName"));
+        params.put("region", encodeEurekaParamName("region"));
+        params.put("port", encodeEurekaParamName("port"));
+        params.put("securePort", encodeEurekaParamName("securePort"));
+        params.put("portEnabled", encodeEurekaParamName("port.enabled"));
+        params.put("securePortEnabled", encodeEurekaParamName("securePort.enabled"));
 
-        addParam("port");
-        addParam("securePort");
-        addParam("port.enabled");
-        addParam("securePort.enabled");
+        params.put("vipAddress", encodeEurekaParamName("vipAddress"));
+        params.put("secureVipAddress", encodeEurekaParamName("secureVipAddress"));
 
-        addParam("vipAddress");
-        addParam("secureVipAddress");
+        params.put("statusPageUrlPath", encodeEurekaParamName("statusPageUrlPath"));
+        params.put("statusPageUrl", encodeEurekaParamName("statusPageUrl"));
+        params.put("homePageUrlPath", encodeEurekaParamName("homePageUrlPath"));
+        params.put("homePageUrl", encodeEurekaParamName("homePageUrl"));
+        params.put("healthCheckUrlPath", encodeEurekaParamName("healthCheckUrlPath"));
+        params.put("healthCheckUrl", encodeEurekaParamName("healthCheckUrl"));
+        params.put("secureHealthCheckUrl", encodeEurekaParamName("secureHealthCheckUrl"));
 
-        addParam("statusPageUrlPath");
-        addParam("statusPageUrl");
-        addParam("homePageUrlPath");
-        addParam("homePageUrl");
-        addParam("healthCheckUrlPath");
-        addParam("healthCheckUrl");
-        addParam("secureHealthCheckUrl");
+        params.put("leaseRenewalInterval", encodeEurekaParamName("lease.renewalInterval"));
+        params.put("leaseDuration", encodeEurekaParamName("lease.duration"));
 
-        addParam("lease.renewalInterval");
-        addParam("lease.duration");
 
-        addParam("metadata");
+        params.put("metadata", encodeEurekaParamName("metadata"));
 
-        addParam("defaultAddressResolutionOrder");
-        addParam("broadcastPublicIpv4");
-        addParam("traffic.enabled");
-        addParam("secureHealthCheckUrl");
+
+        params.put("defaultAddressResolutionOrder", encodeEurekaParamName("defaultAddressResolutionOrder"));
+        params.put("broadcastPublicIpv4", encodeEurekaParamName("broadcastPublicIpv4"));
+        params.put("trafficEnabled", encodeEurekaParamName("traffic.enabled"));
+        params.put("secureHealthCheckUrl", encodeEurekaParamName("secureHealthCheckUrl"));
         params.put("environment", "eureka.environment");
 
     }
 
-    private static void addParam(String key) {
-        params.put(key, encodeEurekaParamName(key));
-    }
 
     private static String encodeEurekaParamName(String key) {
         return EUREKA_NAMESPACE + "." + key;
