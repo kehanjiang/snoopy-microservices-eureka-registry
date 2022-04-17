@@ -29,7 +29,7 @@ import static com.snoopy.registry.eureka.EurekaRegistryProvider.META_NAME;
 public class EurekaRegistry implements IRegistry {
     private SnoopyApplicationInfoManager snoopyApplicationInfoManager;
     private EurekaClient eurekaClient;
-    private EurekaEventListener eurekaEventListener;
+    private Map<String, EurekaEventListener> listenerMap = new HashMap<>();
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
 
@@ -47,15 +47,19 @@ public class EurekaRegistry implements IRegistry {
         reentrantLock.lock();
         try {
             notifyChange(serviceInfo, subscribeCallback);
-            eurekaEventListener = new EurekaEventListener() {
-                @Override
-                public void onEvent(EurekaEvent event) {
-                    if (event instanceof CacheRefreshedEvent) {
-                        notifyChange(serviceInfo, subscribeCallback);
+            EurekaEventListener eurekaEventListener = listenerMap.get(serviceInfo.getPath());
+            if (eurekaEventListener == null) {
+                eurekaEventListener = new EurekaEventListener() {
+                    @Override
+                    public void onEvent(EurekaEvent event) {
+                        if (event instanceof CacheRefreshedEvent) {
+                            notifyChange(serviceInfo, subscribeCallback);
+                        }
                     }
-                }
-            };
-            eurekaClient.registerEventListener(eurekaEventListener);
+                };
+                eurekaClient.registerEventListener(eurekaEventListener);
+                listenerMap.put(serviceInfo.getPath(), eurekaEventListener);
+            }
         } catch (Throwable e) {
             throw new RuntimeException("[" + serviceInfo.getPath() + "] subscribe failed !", e);
         } finally {
@@ -67,7 +71,11 @@ public class EurekaRegistry implements IRegistry {
     public void unsubscribe(RegistryServiceInfo serviceInfo) {
         reentrantLock.lock();
         try {
-            eurekaClient.unregisterEventListener(eurekaEventListener);
+            EurekaEventListener eurekaEventListener = listenerMap.get(serviceInfo.getPath());
+            if (eurekaEventListener != null) {
+                eurekaClient.unregisterEventListener(eurekaEventListener);
+                listenerMap.remove(serviceInfo.getPath());
+            }
         } catch (Throwable e) {
             throw new RuntimeException("[" + serviceInfo.getPath() + "] unsubscribe failed !", e);
         } finally {
@@ -80,6 +88,7 @@ public class EurekaRegistry implements IRegistry {
         reentrantLock.lock();
         try {
             if (!snoopyApplicationInfoManager.isRegistry(serviceInfo)) {
+                unregister(serviceInfo);
                 snoopyApplicationInfoManager.registry(serviceInfo);
             }
         } catch (Throwable e) {
@@ -141,6 +150,7 @@ public class EurekaRegistry implements IRegistry {
 
     @Override
     public void close() throws IOException {
+        listenerMap.clear();
         if (eurekaClient != null) {
             eurekaClient.shutdown();
         }

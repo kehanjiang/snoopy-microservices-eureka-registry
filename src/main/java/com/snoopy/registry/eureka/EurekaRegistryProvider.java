@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
 /**
  * @author :   kehanjiang
